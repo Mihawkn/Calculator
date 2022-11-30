@@ -38,32 +38,16 @@ impl Parser {
         None
     }
 
-    fn states(&mut self) -> Vec<Syntax> {
-        let mut result = Vec::new();
-
-        while let Some(token) = self.current_token() {
-            match token {
-                Token::SEMICOLON => {
-                    self.fix(); // SEMICOLON を確定
-                    result.push(Syntax::Statement(self.state()));
-                }
-                _ => {
-                    result.push(Syntax::Statement(self.state()));
-                }
-            }
-        }
-
-        return result;
-    }
-
-    // State = ID '=' Expr | IF Expr '{' State '}' ELSE '{' State '}'
+    // State = CompoundStatement | IfStatement | CompoundStatement'
     fn state(&mut self) -> Statement {
+        let mut result = Statement::Null;
+
         while let Some(token) = self.current_token() {
             match token {
                 // TODO 関数作ったら消す
                 Token::PRINT => {
                     self.fix(); // PRINT を確定
-                    return Statement::Print { expr: self.expr() };
+                    result = Statement::Print { expr: self.expr() };
                 }
 
                 // State = IF Expr '{' State '}' ELSE '{' State '}'
@@ -78,7 +62,7 @@ impl Parser {
                     let state2 = self.state();
                     self.fix(); // '}' を確定
 
-                    return Statement::If {
+                    result = Statement::If {
                         condition: Box::new(expr1),
                         then: Box::new(state1),
                         els: Box::new(state2),
@@ -91,7 +75,7 @@ impl Parser {
                         if next_token == Token::EQ {
                             self.fix(); // IDENT を確定
                             self.fix(); // EQ を確定
-                            return Statement::Assign {
+                            result = Statement::Assign {
                                 id: s,
                                 e: Box::new(self.expr()),
                             };
@@ -105,7 +89,16 @@ impl Parser {
             break;
         }
 
-        panic!("Statement のパースに失敗した")
+        // 文の後に ';' が続くようであれば次の文を扱う
+        return if self.current_token() == Some(Token::SEMICOLON) {
+            self.fix();
+            Statement::CompoundStatement {
+                st1: Box::new(result),
+                st2: Box::new(self.state()),
+            }
+        } else {
+            result
+        };
     }
 
     // Expr = AddExpr
@@ -218,7 +211,7 @@ impl Parser {
     }
 }
 
-pub fn parser(toks: Vec<Token>) -> Vec<Syntax> {
+pub fn parser(toks: Vec<Token>) -> Syntax {
     let mut parser = Parser::new(toks);
-    return parser.states();
+    return Syntax::Statement(parser.state());
 }

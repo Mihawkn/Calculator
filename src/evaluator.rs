@@ -4,12 +4,10 @@ use crate::Expr;
 use crate::Statement;
 use crate::Syntax;
 
-pub fn eval(vecs: Vec<Syntax>, env: &mut Env) -> () {
-    for s in vecs.iter() {
-        match s {
-            Syntax::Statement(state) => {
-                exec(state.clone(), env);
-            }
+pub fn eval(syntax: Syntax, env: &mut Env) -> () {
+    match syntax {
+        Syntax::Statement(st) => {
+            exec(st, env);
         }
     }
 }
@@ -17,6 +15,10 @@ pub fn eval(vecs: Vec<Syntax>, env: &mut Env) -> () {
 // 文を実行する
 fn exec(statement: Statement, env: &mut Env) -> () {
     match statement {
+        Statement::CompoundStatement { st1, st2 } => {
+            exec(*st1, env);
+            exec(*st2, env);
+        }
         // TODO 関数作ったら消す
         Statement::Print { expr } => {
             print!("{:?}\n", calc(expr, env));
@@ -36,6 +38,7 @@ fn exec(statement: Statement, env: &mut Env) -> () {
                 exec(*els, env)
             }
         }
+        _ => panic!("実行できない Statement を実行しようとした"),
     }
 }
 

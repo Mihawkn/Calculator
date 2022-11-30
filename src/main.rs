@@ -27,7 +27,7 @@ fn main() {
     #[global_allocator]
     static ALLOC: dhat::Alloc = dhat::Alloc;
 
-    let _target = "if 0 { x = 0 } else { x = 1 } ; if x { x = 3 } else { x = 4 }; print x";
+    let _target = "if 1 { x = 0 } else { x = 1 } ; if x { x = 3 } else { x = 4 }; print x";
     print_eval_result(_target);
 
     #[cfg(feature = "dhat-heap")]
@@ -106,5 +106,15 @@ mod tests {
         // 実行後に x = 14 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
         assert_eq!(env["x"], 14);
+    }
+
+    #[test]
+    fn test_compound_statement() {
+         let str = "if 0 { x = 0 } else { x = 1 } ; if x { x = 3 } else { x = 4 }";
+         let mut env = Env::new();
+
+         // 実行後に x = 3 が代入されていること
+         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
+         assert_eq!(env["x"], 3);
     }
 }

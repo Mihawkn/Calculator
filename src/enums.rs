@@ -41,6 +41,10 @@ pub enum Expr {
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Statement {
+    CompoundStatement {
+        st1: Box<Statement>,
+        st2: Box<Statement>,
+    },
     Print {
         // TODO 関数作ったら関数にする
         expr: Expr,
@@ -54,6 +58,7 @@ pub enum Statement {
         then: Box<Statement>,
         els: Box<Statement>,
     },
+    Null,
 }
 
 #[derive(Debug, PartialEq, Clone)]
