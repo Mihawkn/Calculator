@@ -1,7 +1,7 @@
-mod state;
-mod primaryexpr;
 mod addexpr;
 mod mulexpr;
+mod primaryexpr;
+mod state;
 
 use crate::Syntax;
 use crate::Token;
@@ -44,7 +44,6 @@ impl Parser {
         };
     }
 }
-
 
 pub fn parser(toks: Vec<Token>) -> Syntax {
     let mut parser = Parser::new(toks);

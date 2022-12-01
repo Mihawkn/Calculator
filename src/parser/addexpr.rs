@@ -4,13 +4,26 @@ use crate::Expr;
 use crate::Token;
 
 impl Parser {
+    ///
+    /// AddExpr = MulExpr { AddOp MulExpr }
+    /// AddOp = '+' | '-'
+    ///
     pub(crate) fn add(&mut self) -> Expr {
-        let expr = self.mul();
-        match self.current() {
-            Some(Token::PLUS) => self.plus(expr),
-            Some(Token::MINUS) => self.minus(expr),
-            _ => expr,
+        let mut expr = self.mul();
+        loop {
+            match self.current() {
+                Some(Token::PLUS) => {
+                    expr = self.plus(expr);
+                }
+                Some(Token::MINUS) => {
+                    expr = self.minus(expr);
+                }
+                _ => {
+                    break;
+                }
+            }
         }
+        expr
     }
 
     fn plus(&mut self, lhs: Expr) -> Expr {
@@ -31,4 +44,3 @@ impl Parser {
         }
     }
 }
-

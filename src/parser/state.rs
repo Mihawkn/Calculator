@@ -1,9 +1,13 @@
 use crate::parser::Parser;
-use crate::Statement;
 use crate::Expr;
+use crate::Statement;
 use crate::Token;
 
 impl Parser {
+    ///
+    /// Statement = IfStatement | AssignStatement | CompoundStatement
+    /// CompoundStatement = Statement { ';' Statement }
+    ///
     pub(crate) fn state(&mut self) -> Statement {
         let result = match self.current() {
             Some(Token::PRINT) => self.print(), // TODO 関数を作ったら消す
@@ -20,8 +24,8 @@ impl Parser {
     }
 
     pub(crate) fn expr(&mut self) -> Expr {
-          return self.add();
-     }
+        return self.add();
+    }
 
     fn print(&mut self) -> Statement {
         self.confirm(Token::PRINT);
@@ -70,4 +74,3 @@ impl Parser {
         }
     }
 }
-

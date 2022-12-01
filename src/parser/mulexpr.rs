@@ -1,16 +1,29 @@
-use crate::parser::Parser;  
+use crate::parser::Parser;
 use crate::BinOp;
 use crate::Expr;
 use crate::Token;
 
 impl Parser {
+    ///
+    /// MulExpr = PrimaryExpr { MulOp PrimaryExpr }
+    /// MulOp = '*' | '/'
+    ///
     pub(crate) fn mul(&mut self) -> Expr {
-        let expr = self.primary();
-        match self.current() {
-            Some(Token::STAR) => self.star(expr),
-            Some(Token::SLASH) => self.slash(expr),
-            _ => expr,
+        let mut expr = self.primary();
+        loop {
+            match self.current() {
+                Some(Token::STAR) => {
+                    expr = self.star(expr);
+                }
+                Some(Token::SLASH) => {
+                    expr = self.slash(expr);
+                }
+                _ => {
+                    break;
+                }
+            }
         }
+        expr
     }
 
     fn star(&mut self, lhs: Expr) -> Expr {

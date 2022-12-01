@@ -27,8 +27,11 @@ fn main() {
     #[global_allocator]
     static ALLOC: dhat::Alloc = dhat::Alloc;
 
-    let _target = "if 1 { x = 0 } else { x = 1 } ; if x { x = 3 } else { x = 4 }; print x";
-    print_eval_result(_target);
+    let args: Vec<String> = std::env::args().collect();
+    match args.get(1) {
+        Some(str) => print_eval_result(str),
+        _ => print!("usage: cargo run \"x = 1 + 2 + 3\"\n"),
+    }
 
     #[cfg(feature = "dhat-heap")]
     let _profiler = dhat::Profiler::new_heap();
@@ -49,6 +52,16 @@ mod tests {
     }
 
     #[test]
+    fn test_negative() {
+        let str = "x = -1";
+        let mut env = Env::new();
+
+        // 実行後に x = -1 が代入されていること
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
+        assert_eq!(env["x"], -1);
+    }
+
+    #[test]
     fn test_if() {
         let str = "if 0 { x = 2 } else { x = 3 }";
         let mut env = Env::new();
@@ -60,42 +73,42 @@ mod tests {
 
     #[test]
     fn test_addition() {
-        let str = "x = 1 + 2";
+        let str = "x = 1 + 2 + 3";
         let mut env = Env::new();
 
-        // 実行後に x = 3 が代入されていること
+        // 実行後に x = 6 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
-        assert_eq!(env["x"], 3);
+        assert_eq!(env["x"], 6);
     }
 
     #[test]
     fn test_subtraction() {
-        let str = "x = 1 - 2";
+        let str = "x = 1 - 2 - 3";
         let mut env = Env::new();
 
-        // 実行後に x = 3 が代入されていること
+        // 実行後に x = -4 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
-        assert_eq!(env["x"], -1);
+        assert_eq!(env["x"], -4);
     }
 
     #[test]
     fn test_multiplication() {
-        let str = "x = 1 * 2";
+        let str = "x = 1 * 2 * 3";
         let mut env = Env::new();
 
-        // 実行後に x = 2 が代入されていること
+        // 実行後に x = 6 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
-        assert_eq!(env["x"], 2);
+        assert_eq!(env["x"], 6);
     }
 
     #[test]
     fn test_division() {
-        let str = "x = 4 / 2";
+        let str = "x = 4 / 2 / 2";
         let mut env = Env::new();
 
-        // 実行後に x = 2 が代入されていること
+        // 実行後に x = 1 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
-        assert_eq!(env["x"], 2);
+        assert_eq!(env["x"], 1);
     }
 
     #[test]
@@ -110,11 +123,11 @@ mod tests {
 
     #[test]
     fn test_compound_statement() {
-         let str = "if 0 { x = 0 } else { x = 1 } ; if x { x = 3 } else { x = 4 }";
-         let mut env = Env::new();
+        let str = "if 0 { x = 0 } else { x = 1 } ; if x { x = 3 } else { x = 4 }";
+        let mut env = Env::new();
 
-         // 実行後に x = 3 が代入されていること
-         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
-         assert_eq!(env["x"], 3);
+        // 実行後に x = 3 が代入されていること
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
+        assert_eq!(env["x"], 3);
     }
 }
