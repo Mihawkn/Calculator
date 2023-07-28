@@ -1,10 +1,11 @@
 use crate::parser::Parser;
-use crate::Expr;
-use crate::Token;
+
+use crate::enums::Expr;
+use crate::enums::Token;
 
 impl Parser {
     ///
-    /// PrimaryExpr = '(' AddExpr ')' | NUMBER | ID
+    /// PrimaryExpr = '(' Expr ')' | NUMBER | ID | FunctionCall
     ///
     pub(crate) fn primary(&mut self) -> Expr {
         return match self.current() {
@@ -40,7 +41,19 @@ impl Parser {
 
     fn ident(&mut self, str: String) -> Expr {
         self.fix();
-        Expr::Var(str)
+
+        match self.current() {
+            Some(Token::LPAR) => {
+                self.confirm(Token::LPAR);
+                let args = self.parse_param_list();
+                self.confirm(Token::RPAR);
+                Expr::FunctionCall {
+                    id: str,
+                    args: args,
+                }
+            }
+            _ => Expr::Var(str),
+        }
     }
 
     // TODO 負の数考え中

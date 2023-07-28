@@ -1,7 +1,8 @@
 use crate::parser::Parser;
-use crate::BinOp;
-use crate::Expr;
-use crate::Token;
+
+use crate::enums::BinOp;
+use crate::enums::Expr;
+use crate::enums::Token;
 
 impl Parser {
     ///

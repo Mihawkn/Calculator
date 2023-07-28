@@ -1,24 +1,28 @@
+mod enums;
 mod evaluator;
 mod parser;
 mod scanner;
 
-mod enums;
-use crate::enums::BinOp;
 use crate::enums::Env;
-use crate::enums::Expr;
-use crate::enums::Statement;
-use crate::enums::Syntax;
-use crate::enums::Token;
+use crate::enums::FunctionTable;
 
 fn print_eval_result(str: &str) -> () {
     print!("-----------------------------------------\n");
+    print!("計算対象：\n {:?}\n", str);
+    print!("スキャン結果：\n {:?}\n", scanner::scanner(str));
+    print!(
+        "パース結果：\n {:?}\n",
+        parser::parser(scanner::scanner(str))
+    );
+
     let mut env = Env::new();
-    print!("計算対象：{:?}\n", str);
-    print!("スキャン結果：{:?}\n", scanner::scanner(str));
-    print!("パース結果：{:?}\n", parser::parser(scanner::scanner(str)));
-    print!("結果：");
-    evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
-    print!("環境：{:?}\n", env);
+    let mut ft = FunctionTable::new();
+    evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
+
+    print!(
+        "実行後の状態：\n　環境：{:?}\n　関数テーブル：{:?}\n",
+        env, ft
+    );
     print!("-----------------------------------------\n");
 }
 
@@ -45,9 +49,10 @@ mod tests {
     fn test_assign() {
         let str = "x = 123";
         let mut env = Env::new();
+        let mut ft = FunctionTable::new();
 
         // 実行後に x = 123 が代入されていること
-        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], 123);
     }
 
@@ -55,9 +60,10 @@ mod tests {
     fn test_negative() {
         let str = "x = -1";
         let mut env = Env::new();
+        let mut ft = FunctionTable::new();
 
         // 実行後に x = -1 が代入されていること
-        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], -1);
     }
 
@@ -65,9 +71,10 @@ mod tests {
     fn test_if() {
         let str = "if 0 { x = 2 } else { x = 3 }";
         let mut env = Env::new();
+        let mut ft = FunctionTable::new();
 
         // 実行後に x = 3 が代入されていること
-        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], 3);
     }
 
@@ -75,9 +82,10 @@ mod tests {
     fn test_addition() {
         let str = "x = 1 + 2 + 3";
         let mut env = Env::new();
+        let mut ft = FunctionTable::new();
 
         // 実行後に x = 6 が代入されていること
-        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], 6);
     }
 
@@ -85,9 +93,10 @@ mod tests {
     fn test_subtraction() {
         let str = "x = 1 - 2 - 3";
         let mut env = Env::new();
+        let mut ft = FunctionTable::new();
 
         // 実行後に x = -4 が代入されていること
-        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], -4);
     }
 
@@ -95,9 +104,10 @@ mod tests {
     fn test_multiplication() {
         let str = "x = 1 * 2 * 3";
         let mut env = Env::new();
+        let mut ft = FunctionTable::new();
 
         // 実行後に x = 6 が代入されていること
-        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], 6);
     }
 
@@ -105,9 +115,10 @@ mod tests {
     fn test_division() {
         let str = "x = 4 / 2 / 2";
         let mut env = Env::new();
+        let mut ft = FunctionTable::new();
 
         // 実行後に x = 1 が代入されていること
-        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], 1);
     }
 
@@ -115,9 +126,10 @@ mod tests {
     fn test_parenthesis() {
         let str = "x = 2 * (3 + 4) ";
         let mut env = Env::new();
+        let mut ft = FunctionTable::new();
 
         // 実行後に x = 14 が代入されていること
-        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], 14);
     }
 
@@ -125,9 +137,32 @@ mod tests {
     fn test_compound_statement() {
         let str = "if 0 { x = 0 } else { x = 1 } ; if x { x = 3 } else { x = 4 }";
         let mut env = Env::new();
+        let mut ft = FunctionTable::new();
 
         // 実行後に x = 3 が代入されていること
-        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], 3);
+    }
+
+    #[test]
+    fn test_function_define() {
+        let str = "fn test(i) { return i + 1 }; x = (test(2) + 3)";
+        let mut env = Env::new();
+        let mut ft = FunctionTable::new();
+
+        // 実行後に x = 6 が代入されていること
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
+        assert_eq!(env["x"], 6);
+    }
+
+    #[test]
+    fn test_function_call() {
+        let str = "fn fib(n) { if ( n < 3 ) { return 1 } else { return fib( n - 1 ) + fib( n - 2 ) } }; x = fib(22)";
+        let mut env = Env::new();
+        let mut ft = FunctionTable::new();
+
+        // 実行後に x = 17711 が代入されていること
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
+        assert_eq!(env["x"], 17711);
     }
 }

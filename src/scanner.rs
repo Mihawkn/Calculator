@@ -1,4 +1,4 @@
-use crate::Token;
+use crate::enums::Token;
 
 struct Scanner {
     input: Vec<char>,
@@ -36,6 +36,10 @@ impl Scanner {
                     self.pos += 1;
                     return Some(Token::SLASH);
                 }
+                '<' => {
+                    self.pos += 1;
+                    return Some(Token::LT);
+                }
                 '(' => {
                     self.pos += 1;
                     return Some(Token::LPAR);
@@ -55,6 +59,10 @@ impl Scanner {
                 '=' => {
                     self.pos += 1;
                     return Some(Token::EQ);
+                }
+                ',' => {
+                    self.pos += 1;
+                    return Some(Token::COMMA);
                 }
                 ';' => {
                     self.pos += 1;
@@ -96,6 +104,8 @@ impl Scanner {
                     return match &*_word {
                         "if" => Some(Token::IF),
                         "else" => Some(Token::ELSE),
+                        "return" => Some(Token::RETURN),
+                        "fn" => Some(Token::FN),
                         "print" => Some(Token::PRINT), // TODO 関数作ったら消す
                         _ => Some(Token::IDENT(_word)),
                     };

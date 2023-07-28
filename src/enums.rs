@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 pub type Env = HashMap<String, i32>;
+pub type FunctionTable = HashMap<String, Declaration>;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Token {
@@ -12,12 +13,16 @@ pub enum Token {
     LBRACE,
     RBRACE,
     EQ,
+    LT,
     NUMBER(i32),
     IF,
     ELSE,
     IDENT(String),
     SEMICOLON,
-    PRINT, // TODO 関数作ったら関数にする
+    COMMA,
+    FN,
+    RETURN,
+    PRINT,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -29,14 +34,28 @@ pub enum BinOp {
 }
 
 #[derive(Debug, PartialEq, Clone)]
+pub enum ComparisonOp {
+    Lt,
+}
+
+#[derive(Debug, PartialEq, Clone)]
 pub enum Expr {
     Binary {
         op: BinOp,
         lhs: Box<Expr>,
         rhs: Box<Expr>,
     },
+    Comparison {
+        op: ComparisonOp,
+        lhs: Box<Expr>,
+        rhs: Box<Expr>,
+    },
     Number(i32),
     Var(String),
+    FunctionCall {
+        id: String,
+        args: Vec<Expr>,
+    },
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -58,7 +77,26 @@ pub enum Statement {
         then: Box<Statement>,
         els: Box<Statement>,
     },
+    Return {
+        expr: Box<Expr>,
+    },
+    FunctionDefine {
+        id: String,
+        arg: Vec<String>,
+        st: Box<Statement>,
+    },
+    FunctionCall {
+        expr: Expr,
+    },
     Null,
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub enum Declaration {
+    Function {
+        arg: Vec<String>,
+        st: Box<Statement>,
+    },
 }
 
 #[derive(Debug, PartialEq, Clone)]

@@ -1,10 +1,12 @@
 mod addexpr;
 mod mulexpr;
+mod paramlist;
 mod primaryexpr;
+mod relationalexpr;
 mod state;
 
-use crate::Syntax;
-use crate::Token;
+use crate::enums::Syntax;
+use crate::enums::Token;
 
 struct Parser {
     input: Vec<Token>,
@@ -40,7 +42,11 @@ impl Parser {
     fn confirm(&mut self, expect: Token) {
         match self.current() {
             Some(token) if token == expect => self.fix(),
-            _ => panic!("想定外のトークンがきた"),
+            _ => panic!(
+                "{:?} を想定していたが想定外のトークン {:?} がきた",
+                expect,
+                self.current()
+            ),
         };
     }
 }
