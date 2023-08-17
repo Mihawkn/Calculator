@@ -9,15 +9,15 @@ impl Parser {
     /// MulExpr = PrimaryExpr { MulOp PrimaryExpr }
     /// MulOp = '*' | '/'
     ///
-    pub(crate) fn mul(&mut self) -> Expr {
-        let mut expr = self.primary();
+    pub(crate) fn parse_mul(&mut self) -> Expr {
+        let mut expr = self.parse_primary();
         loop {
             match self.current() {
                 Some(Token::STAR) => {
-                    expr = self.star(expr);
+                    expr = self.parse_star(expr);
                 }
                 Some(Token::SLASH) => {
-                    expr = self.slash(expr);
+                    expr = self.parse_slash(expr);
                 }
                 _ => {
                     break;
@@ -27,21 +27,21 @@ impl Parser {
         expr
     }
 
-    fn star(&mut self, lhs: Expr) -> Expr {
+    fn parse_star(&mut self, lhs: Expr) -> Expr {
         self.confirm(Token::STAR);
         Expr::Binary {
             op: BinOp::Mul,
             lhs: Box::new(lhs),
-            rhs: Box::new(self.primary()),
+            rhs: Box::new(self.parse_primary()),
         }
     }
 
-    fn slash(&mut self, lhs: Expr) -> Expr {
+    fn parse_slash(&mut self, lhs: Expr) -> Expr {
         self.confirm(Token::SLASH);
         Expr::Binary {
             op: BinOp::Div,
             lhs: Box::new(lhs),
-            rhs: Box::new(self.primary()),
+            rhs: Box::new(self.parse_primary()),
         }
     }
 }

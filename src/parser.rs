@@ -53,5 +53,5 @@ impl Parser {
 
 pub fn parser(toks: Vec<Token>) -> Syntax {
     let mut parser = Parser::new(toks);
-    return Syntax::Statement(parser.state());
+    return Syntax::Statement(parser.parse_state());
 }

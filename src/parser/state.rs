@@ -11,43 +11,43 @@ impl Parser {
     /// FunctionDefineStatement = 'fn' ID ParameterList '{' Statement '}'
     /// ReturnStatement       = 'return' AddExpr
     ///
-    pub(crate) fn state(&mut self) -> Statement {
+    pub(crate) fn parse_state(&mut self) -> Statement {
         let result = match self.current() {
-            Some(Token::PRINT) => self.print(),
-            Some(Token::IF) => self.sif(),
+            Some(Token::PRINT) => self.parse_print(),
+            Some(Token::IF) => self.parse_if(),
             Some(Token::RETURN) => self.parse_return(),
             Some(Token::FN) => self.parse_functiondefine(),
-            Some(Token::IDENT(s)) => self.sident(s),
+            Some(Token::IDENT(s)) => self.parse_ident(s),
             _ => Statement::Null,
         };
 
         // 文の後に ';' が続くようであれば次の文を扱う
         match self.current() {
-            Some(Token::SEMICOLON) => self.compound(result),
+            Some(Token::SEMICOLON) => self.parse_compound(result),
             _ => result,
         }
     }
 
-    pub(crate) fn expr(&mut self) -> Expr {
-        return self.relational();
+    pub(crate) fn parse_expr(&mut self) -> Expr {
+        return self.parse_relational();
     }
 
-    fn print(&mut self) -> Statement {
+    fn parse_print(&mut self) -> Statement {
         self.confirm(Token::PRINT);
-        Statement::Print { expr: self.expr() }
+        Statement::Print { expr: self.parse_expr() }
     }
 
-    fn sif(&mut self) -> Statement {
+    fn parse_if(&mut self) -> Statement {
         self.confirm(Token::IF);
-        let expr1 = self.relational();
+        let expr1 = self.parse_expr();
 
         self.confirm(Token::LBRACE);
-        let state1 = self.state();
+        let state1 = self.parse_state();
         self.confirm(Token::RBRACE);
 
         self.confirm(Token::ELSE);
         self.confirm(Token::LBRACE);
-        let state2 = self.state();
+        let state2 = self.parse_state();
         self.confirm(Token::RBRACE);
 
         Statement::If {
@@ -60,7 +60,7 @@ impl Parser {
     fn parse_return(&mut self) -> Statement {
         self.confirm(Token::RETURN);
         Statement::Return {
-            expr: Box::new(self.expr()),
+            expr: Box::new(self.parse_expr()),
         }
     }
 
@@ -84,7 +84,7 @@ impl Parser {
 
         // 関数の中身 '{' Statement '}'
         self.confirm(Token::LBRACE);
-        let state = self.state();
+        let state = self.parse_state();
         self.confirm(Token::RBRACE);
 
         Statement::FunctionDefine {
@@ -94,28 +94,28 @@ impl Parser {
         }
     }
 
-    fn sident(&mut self, s: String) -> Statement {
+    fn parse_ident(&mut self, s: String) -> Statement {
         match self.next() {
             Some(Token::EQ) => {
                 self.fix();
                 self.confirm(Token::EQ);
                 Statement::Assign {
                     id: s,
-                    e: Box::new(self.expr()),
+                    e: Box::new(self.parse_expr()),
                 }
             }
             Some(Token::LPAR) => Statement::FunctionCall {
-                expr: self.primary(),
+                expr: self.parse_expr(),
             },
             _ => Statement::Null,
         }
     }
 
-    fn compound(&mut self, st: Statement) -> Statement {
+    fn parse_compound(&mut self, st: Statement) -> Statement {
         self.confirm(Token::SEMICOLON);
         Statement::CompoundStatement {
             st1: Box::new(st),
-            st2: Box::new(self.state()),
+            st2: Box::new(self.parse_state()),
         }
     }
 }

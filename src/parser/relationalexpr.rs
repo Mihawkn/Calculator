@@ -9,8 +9,8 @@ impl Parser {
     /// RelationalExpr = AddExpr { ComparisonOp AddExpr }
     /// ComparisonOp = '<'
     ///
-    pub(crate) fn relational(&mut self) -> Expr {
-        let expr = self.add();
+    pub(crate) fn parse_relational(&mut self) -> Expr {
+        let expr = self.parse_add();
 
         match self.current() {
             Some(Token::LT) => self.lt(expr),
@@ -23,7 +23,7 @@ impl Parser {
         Expr::Comparison {
             op: ComparisonOp::Lt,
             lhs: Box::new(lhs),
-            rhs: Box::new(self.add()),
+            rhs: Box::new(self.parse_expr()),
         }
     }
 }

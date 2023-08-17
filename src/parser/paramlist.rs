@@ -15,12 +15,12 @@ impl Parser {
         let mut param: Vec<Expr> = Vec::new();
 
         // ひとつめのパラメーターを格納する
-        param.push(self.expr());
+        param.push(self.parse_expr());
 
         // ふたつめ以降のパラメーターを格納する
         while let Some(Token::COMMA) = self.current() {
             self.confirm(Token::COMMA);
-            param.push(self.expr());
+            param.push(self.parse_expr());
         }
 
         param
