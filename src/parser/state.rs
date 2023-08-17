@@ -28,13 +28,13 @@ impl Parser {
         }
     }
 
-    pub(crate) fn parse_expr(&mut self) -> Expr {
-        return self.parse_relational();
-    }
+    pub(crate) fn parse_expr(&mut self) -> Expr { return self.parse_relational(); }
 
     fn parse_print(&mut self) -> Statement {
         self.confirm(Token::PRINT);
-        Statement::Print { expr: self.parse_expr() }
+        Statement::Print {
+            expr: self.parse_expr(),
+        }
     }
 
     fn parse_if(&mut self) -> Statement {

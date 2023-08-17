@@ -35,9 +35,7 @@ impl Parser {
         None
     }
 
-    fn fix(&mut self) {
-        self.pos += 1;
-    }
+    fn fix(&mut self) { self.pos += 1; }
 
     fn confirm(&mut self, expect: Token) {
         match self.current() {
