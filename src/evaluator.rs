@@ -90,8 +90,7 @@ fn calc(expr: Expr, env: &mut Env, ft: &mut FunctionTable) -> i32 {
                 Some(Declaration::Function { arg, st }) => {
                     // 引数として渡した値をセットする
                     for (expr, param) in args.iter().zip(arg.clone().iter()) {
-                        local_env
-                            .insert(param.to_string(), calc(expr.clone(), env, &mut ft.clone()));
+                        local_env.insert(param.to_string(), calc(expr.clone(), env, &mut ft.clone()));
                     }
 
                     // 関数を実行する
