@@ -64,10 +64,6 @@ pub enum Statement {
         st1: Box<Statement>,
         st2: Box<Statement>,
     },
-    Print {
-        // TODO 関数作ったら関数にする
-        expr: Expr,
-    },
     Assign {
         id: String,
         e: Box<Expr>,
@@ -103,3 +99,4 @@ pub enum Declaration {
 pub enum Syntax {
     Statement(Statement),
 }
+

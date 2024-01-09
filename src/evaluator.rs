@@ -1,5 +1,10 @@
+ mod builtin;
+
 use crate::Env;
 use crate::FunctionTable;
+
+use crate::evaluator::builtin::is_builtin;
+use crate::evaluator::builtin::exec_builtin;
 
 use crate::enums::BinOp;
 use crate::enums::ComparisonOp;
@@ -32,9 +37,6 @@ fn exec(statement: Statement, env: &mut Env, ft: &mut FunctionTable) -> () {
         Statement::Return { expr } => {
             let value = calc(*expr, env, ft);
             env.insert("return".to_string(), value);
-        }
-        Statement::Print { expr } => {
-            print!("{:?}\n", calc(expr, env, ft));
         }
         Statement::Assign { id, e } => {
             let value = calc(*e, env, ft);
@@ -86,6 +88,10 @@ fn calc(expr: Expr, env: &mut Env, ft: &mut FunctionTable) -> i32 {
             // ローカル環境を用意する
             let mut local_env = Env::new();
 
+            if is_builtin(id.to_string()) {
+                   exec_builtin(id.to_string(), args)
+            } else {         
+
             match ft.get(&id.to_string()) {
                 Some(Declaration::Function { arg, st }) => {
                     // 引数として渡した値をセットする
@@ -102,6 +108,7 @@ fn calc(expr: Expr, env: &mut Env, ft: &mut FunctionTable) -> i32 {
                 }
                 None => panic!("関数テーブル ft に関数名 {:?} が登録されていない", id),
             }
+          }
         }
     }
 }
