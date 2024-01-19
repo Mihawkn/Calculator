@@ -169,7 +169,7 @@ mod tests {
 
     #[test]
     fn test_builtin_function_call() {
-        let str = "x = 1 + 2 + 3; print(x)";
+        let str = "x = 1 + 2 + 3; print_int(x)";
         let mut env = Env::new();
         let mut ft = FunctionTable::new();
 

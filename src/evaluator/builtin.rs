@@ -9,7 +9,7 @@ struct Function<'a> {
 
 // 組み込み関数の一覧
 static BUILTIN_LIST: [Function; 1] = [Function {
-    id: "print",
+    id: "print_int",
     r#fn: print_int,
 }];
 

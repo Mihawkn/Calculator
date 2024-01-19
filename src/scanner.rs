@@ -91,6 +91,7 @@ impl Scanner {
                     while self.pos < self.input.len() {
                         match self.input[self.pos] {
                             'a'..='z' => self.pos += 1,
+                            '_' => self.pos += 1,
                             _ => break,
                         }
                     }
