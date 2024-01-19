@@ -17,6 +17,7 @@ fn print_eval_result(str: &str) -> () {
 
     let mut env = Env::new();
     let mut ft = FunctionTable::new();
+    print!("実行：");
     evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
 
     print!(
@@ -34,7 +35,7 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     match args.get(1) {
         Some(str) => print_eval_result(str),
-        _ => print!("usage: cargo run \"x = 1 + 2 + 3\"\n"),
+        _ => print!("usage: cargo run \"x = 1 + 2 + 3; print(x)\"\n"),
     }
 
     #[cfg(feature = "dhat-heap")]
@@ -165,4 +166,15 @@ mod tests {
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], 17711);
     }
+
+    #[test]
+    fn test_builtin_function_call() {
+        let str = "x = 1 + 2 + 3; print(x)";
+        let mut env = Env::new();
+        let mut ft = FunctionTable::new();
+
+        // 実行後に x = 6 が代入されていること
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
+        assert_eq!(env["x"], 6);
+    } 
 }

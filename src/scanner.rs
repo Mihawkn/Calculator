@@ -106,7 +106,6 @@ impl Scanner {
                         "else" => Some(Token::ELSE),
                         "return" => Some(Token::RETURN),
                         "fn" => Some(Token::FN),
-                        "print" => Some(Token::PRINT), // TODO 関数作ったら消す
                         _ => Some(Token::IDENT(_word)),
                     };
                 }

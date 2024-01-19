@@ -1,10 +1,7 @@
- mod builtin;
+mod builtin;
 
 use crate::Env;
 use crate::FunctionTable;
-
-use crate::evaluator::builtin::is_builtin;
-use crate::evaluator::builtin::exec_builtin;
 
 use crate::enums::BinOp;
 use crate::enums::ComparisonOp;
@@ -14,6 +11,9 @@ use crate::enums::Statement;
 use crate::enums::Syntax;
 
 pub fn eval(syntax: Syntax, env: &mut Env, ft: &mut FunctionTable) -> () {
+    // 準備
+    builtin::register(ft);
+
     match syntax {
         Syntax::Statement(st) => {
             exec(st, env, ft);
@@ -88,11 +88,15 @@ fn calc(expr: Expr, env: &mut Env, ft: &mut FunctionTable) -> i32 {
             // ローカル環境を用意する
             let mut local_env = Env::new();
 
-            if is_builtin(id.to_string()) {
-                   exec_builtin(id.to_string(), args)
-            } else {         
-
             match ft.get(&id.to_string()) {
+                Some(Declaration::BuiltinFunction { id: _, r#fn }) => {
+                    // 組み込み関数を実行する
+                    r#fn(
+                        args.iter()
+                            .map(|x| calc(x.clone(), env, &mut ft.clone()))
+                            .collect(),
+                    )
+                }
                 Some(Declaration::Function { arg, st }) => {
                     // 引数として渡した値をセットする
                     for (expr, param) in args.iter().zip(arg.clone().iter()) {
@@ -108,7 +112,6 @@ fn calc(expr: Expr, env: &mut Env, ft: &mut FunctionTable) -> i32 {
                 }
                 None => panic!("関数テーブル ft に関数名 {:?} が登録されていない", id),
             }
-          }
         }
     }
 }

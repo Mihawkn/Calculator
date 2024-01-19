@@ -22,7 +22,6 @@ pub enum Token {
     COMMA,
     FN,
     RETURN,
-    PRINT,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -92,6 +91,10 @@ pub enum Declaration {
     Function {
         arg: Vec<String>,
         st: Box<Statement>,
+    },
+    BuiltinFunction {
+        id: String,
+        r#fn: fn(Vec<i32>) -> i32,
     },
 }
 
