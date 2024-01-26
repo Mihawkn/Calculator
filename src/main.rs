@@ -5,6 +5,7 @@ mod scanner;
 
 use crate::enums::Env;
 use crate::enums::FunctionTable;
+ use crate::enums::Value;
 
 fn print_eval_result(str: &str) -> () {
     print!("-----------------------------------------\n");
@@ -54,7 +55,7 @@ mod tests {
 
         // 実行後に x = 123 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["x"], 123);
+        assert_eq!(env["x"], Value::Int(123));
     }
 
     #[test]
@@ -65,7 +66,7 @@ mod tests {
 
         // 実行後に x = -1 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["x"], -1);
+        assert_eq!(env["x"], Value::Int(-1));
     }
 
     #[test]
@@ -76,7 +77,7 @@ mod tests {
 
         // 実行後に x = 3 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["x"], 3);
+        assert_eq!(env["x"], Value::Int(3));
     }
 
     #[test]
@@ -87,7 +88,7 @@ mod tests {
 
         // 実行後に x = 6 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["x"], 6);
+        assert_eq!(env["x"], Value::Int(6));
     }
 
     #[test]
@@ -98,7 +99,7 @@ mod tests {
 
         // 実行後に x = -4 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["x"], -4);
+        assert_eq!(env["x"], Value::Int(-4));
     }
 
     #[test]
@@ -109,7 +110,7 @@ mod tests {
 
         // 実行後に x = 6 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["x"], 6);
+        assert_eq!(env["x"], Value::Int(6));
     }
 
     #[test]
@@ -120,7 +121,7 @@ mod tests {
 
         // 実行後に x = 1 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["x"], 1);
+        assert_eq!(env["x"], Value::Int(1));
     }
 
     #[test]
@@ -131,7 +132,7 @@ mod tests {
 
         // 実行後に x = 14 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["x"], 14);
+        assert_eq!(env["x"], Value::Int(14));
     }
 
     #[test]
@@ -142,7 +143,7 @@ mod tests {
 
         // 実行後に x = 3 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["x"], 3);
+        assert_eq!(env["x"], Value::Int(3));
     }
 
     #[test]
@@ -153,7 +154,7 @@ mod tests {
 
         // 実行後に x = 6 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["x"], 6);
+        assert_eq!(env["x"], Value::Int(6));
     }
 
     #[test]
@@ -164,7 +165,7 @@ mod tests {
 
         // 実行後に x = 17711 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["x"], 17711);
+        assert_eq!(env["x"], Value::Int(17711));
     }
 
     #[test]
@@ -175,6 +176,18 @@ mod tests {
 
         // 実行後に x = 6 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["x"], 6);
+        assert_eq!(env["x"], Value::Int(6));
     } 
+
+    #[test]
+    fn test_str_value() {
+        let str="x=\"Hello\"; print_str(x)";
+        let mut env = Env::new();
+        let mut ft = FunctionTable::new();
+
+        // 実行後に x = Hello が代入されていること
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
+        assert_eq!(env["x"], Value::Text("Hello".to_string()));
+    }
+
 }

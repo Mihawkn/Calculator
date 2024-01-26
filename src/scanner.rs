@@ -68,6 +68,30 @@ impl Scanner {
                     self.pos += 1;
                     return Some(Token::SEMICOLON);
                 }
+                '\\' => {
+                    // エスケープ文字はとりあえず無視しておく
+//                    self.pos += 1;
+                }
+                '"' => {
+                    self.pos += 1;
+                    let start_idx = self.pos;
+
+                    // 次の " が来るまで読む
+                    while self.pos < self.input.len() {
+                        match self.input[self.pos] {
+                            '"' => break,
+                            _ => self.pos += 1,
+                        }
+                    }
+                    let _str: String = self.input[start_idx..self.pos]
+                        .iter()
+                        .collect::<String>()
+                        .parse()
+                        .unwrap();
+
+                    self.pos += 1;
+                    return Some(Token::STR(_str));
+                }
                 '0'..='9' => {
                     let start_idx = self.pos;
                     // 数字が続く限り次を読む

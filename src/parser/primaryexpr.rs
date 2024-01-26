@@ -13,6 +13,7 @@ impl Parser {
             Some(Token::LBRACE) => self.parse_brace(),
             Some(Token::NUMBER(n)) => self.parse_number(n),
             Some(Token::IDENT(str)) => self.parse_id(str),
+            Some(Token::STR(str)) => self.parse_str(str),
             Some(Token::MINUS) => self.parse_negative(),
             _ => {
                 panic!("PrimaryExpr を判定する際に想定外のトークンがきた");
@@ -54,6 +55,11 @@ impl Parser {
             }
             _ => Expr::Var(str),
         }
+    }
+
+    fn parse_str(&mut self, str: String) -> Expr {
+        self.fix();
+        Expr::Str(str)
     }
 
     // TODO 負の数考え中
