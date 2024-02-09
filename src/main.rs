@@ -123,6 +123,17 @@ mod tests {
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], Value::Int(1));
     }
+ 
+    #[test]
+    #[should_panic]
+    fn test_zero_division() {
+        let str = "x = 4 / 0";
+        let mut env = Env::new();
+        let mut ft = FunctionTable::new();
+
+        // 実行後に0で除算を試みた時点でエラーで止まること
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
+    }
 
     #[test]
     fn test_parenthesis() {
@@ -189,5 +200,4 @@ mod tests {
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], Value::Text("Hello".to_string()));
     }
-
 }

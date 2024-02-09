@@ -75,6 +75,7 @@ fn calc(expr: Expr, env: &mut Env, ft: &mut FunctionTable) -> Value {
                 _ => panic!("乗算処理が未定義")
             },
             BinOp::Div => match (calc(*lhs, env, ft), calc(*rhs, env, ft)) {
+                (Value::Int(_lhs_n), Value::Int(rhs_n)) if rhs_n == 0 => panic!("0での割り算が発生した"),
                 (Value::Int(lhs_n), Value::Int(rhs_n)) => Value::Int(lhs_n / rhs_n),
                 _ => panic!("除算処理が未定義")
             },
