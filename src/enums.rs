@@ -91,7 +91,7 @@ pub enum Statement {
 
 #[derive(Debug, PartialEq, PartialOrd, Clone)]
 pub enum Value {
-    Int(i32), 
+    Int(i32),
     Text(String),
 }
 
@@ -103,7 +103,7 @@ pub enum Declaration {
     },
     BuiltinFunction {
         id: String,
-        r#fn: fn(Vec<Value>) -> Value,
+        r#fn: fn(Vec<Value>) -> Result<Value, String>,
     },
 }
 
@@ -111,4 +111,3 @@ pub enum Declaration {
 pub enum Syntax {
     Statement(Statement),
 }
-

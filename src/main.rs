@@ -5,7 +5,6 @@ mod scanner;
 
 use crate::enums::Env;
 use crate::enums::FunctionTable;
- use crate::enums::Value;
 
 fn print_eval_result(str: &str) -> () {
     print!("-----------------------------------------\n");
@@ -18,7 +17,7 @@ fn print_eval_result(str: &str) -> () {
 
     let mut env = Env::new();
     let mut ft = FunctionTable::new();
-    print!("実行：");
+    print!("実行：\n");
     evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
 
     print!(
@@ -46,6 +45,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::enums::Value;
 
     #[test]
     fn test_assign() {
@@ -123,9 +123,8 @@ mod tests {
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], Value::Int(1));
     }
- 
+
     #[test]
-    #[should_panic]
     fn test_zero_division() {
         let str = "x = 4 / 0";
         let mut env = Env::new();
@@ -188,16 +187,27 @@ mod tests {
         // 実行後に x = 6 が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], Value::Int(6));
-    } 
+    }
 
     #[test]
     fn test_str_value() {
-        let str="x=\"Hello\"; print_str(x)";
+        let str = "x=\"Hello\"; print_str(x)";
         let mut env = Env::new();
         let mut ft = FunctionTable::new();
 
         // 実行後に x = Hello が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
         assert_eq!(env["x"], Value::Text("Hello".to_string()));
+    }
+
+    #[test]
+    fn test_str_add() {
+        let str = "x = \"abc\"; y = \"def\"; z = x + y";
+        let mut env = Env::new();
+        let mut ft = FunctionTable::new();
+
+        // 実行後に z = abcdef が代入されていること
+        evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
+        assert_eq!(env["z"], Value::Text("abcdef".to_string()));
     }
 }

@@ -68,10 +68,6 @@ impl Scanner {
                     self.pos += 1;
                     return Some(Token::SEMICOLON);
                 }
-                '\\' => {
-                    // エスケープ文字はとりあえず無視しておく
-//                    self.pos += 1;
-                }
                 '"' => {
                     self.pos += 1;
                     let start_idx = self.pos;

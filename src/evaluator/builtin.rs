@@ -5,7 +5,7 @@ use crate::FunctionTable;
 #[derive(Clone)]
 struct Function<'a> {
     id: &'a str,
-    r#fn: fn(Vec<Value>) -> Value,
+    r#fn: fn(Vec<Value>) -> Result<Value, String>,
 }
 
 // 組み込み関数の一覧
@@ -38,15 +38,15 @@ pub fn register(ft: &mut FunctionTable) -> () {
 ///
 /// print_int
 ///
-fn print_int(params: Vec<Value>) -> Value {
+fn print_int(params: Vec<Value>) -> Result<Value, String> {
     print!("{:?}\n", params[0]);
-    Value::Int(0)
+    Ok(Value::Int(0))
 }
 
 ///
 /// print_str
 ///
-fn print_str(params: Vec<Value>) -> Value {
+fn print_str(params: Vec<Value>) -> Result<Value, String> {
     print!("{:?}\n", params[0]);
-    Value::Int(0)
+    Ok(Value::Int(0))
 }
