@@ -105,12 +105,14 @@ impl Scanner {
                     return Some(Token::NUMBER(num));
                 }
 
-                _ => {
+                'a'..='z' | 'A'..='Z' => {
                     let start_idx = self.pos;
                     // 文字が続く限り次を読む
                     while self.pos < self.input.len() {
                         match self.input[self.pos] {
+                            '0'..='9' => self.pos += 1,
                             'a'..='z' => self.pos += 1,
+                            'A'..='Z' => self.pos += 1,
                             '_' => self.pos += 1,
                             _ => break,
                         }
@@ -129,6 +131,10 @@ impl Scanner {
                         "fn" => Some(Token::FN),
                         _ => Some(Token::IDENT(_word)),
                     };
+                }
+
+                _ => {
+                    panic!("予期しない文字 {} を検知した", self.input[self.pos]);
                 }
             }
         }
