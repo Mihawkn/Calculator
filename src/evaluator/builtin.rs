@@ -54,7 +54,7 @@ fn print(params: Vec<Value>) -> Result<Value, String> {
 
             // 出力する
             print!("{:?}\n", str);
-            Ok(Value::Int(0)) // print 関数は何を返すべきか
+            Ok(Value::Unit)
         }
         _ => Err(format!("print 関数にテキスト以外が渡された")),
     }

@@ -93,12 +93,14 @@ pub enum Statement {
 pub enum Value {
     Int(i32),
     Text(String),
+    Unit,
 }
 impl ToString for Value {
     fn to_string(&self) -> String {
         match self {
             Value::Int(i) => format!("{}", i),
             Value::Text(s) => format!("{}", s),
+            Value::Unit => format!(""),
         }
     }
 }
