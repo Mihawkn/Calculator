@@ -9,14 +9,18 @@ struct Function<'a> {
 }
 
 // 組み込み関数の一覧
-static BUILTIN_LIST: [Function; 2] = [
+static BUILTIN_LIST: [Function; 3] = [
     Function {
         id: "print_int",
-        r#fn: print_int,
+        r#fn: print,
     },
     Function {
         id: "print_str",
-        r#fn: print_str,
+        r#fn: print,
+    },
+    Function {
+        id: "print",
+        r#fn: print,
     },
 ];
 
@@ -36,17 +40,22 @@ pub fn register(ft: &mut FunctionTable) -> () {
 }
 
 ///
-/// print_int
+/// print
 ///
-fn print_int(params: Vec<Value>) -> Result<Value, String> {
-    print!("{:?}\n", params[0]);
-    Ok(Value::Int(0))
-}
+fn print(params: Vec<Value>) -> Result<Value, String> {
+    match &params[0] {
+        Value::Text(s) => {
+            let mut str: String = s.to_string();
 
-///
-/// print_str
-///
-fn print_str(params: Vec<Value>) -> Result<Value, String> {
-    print!("{:?}\n", params[0]);
-    Ok(Value::Int(0))
+            // 文字列中に含まれる{}を第2引数以降に変換する
+            for v in &params[1..] {
+                str = str.replacen("{}", &v.to_string(), 1);
+            }
+
+            // 出力する
+            print!("{:?}\n", str);
+            Ok(Value::Int(0)) // print 関数は何を返すべきか
+        }
+        _ => Err(format!("print 関数にテキスト以外が渡された")),
+    }
 }

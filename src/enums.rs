@@ -94,6 +94,14 @@ pub enum Value {
     Int(i32),
     Text(String),
 }
+impl ToString for Value {
+    fn to_string(&self) -> String {
+        match self {
+            Value::Int(i) => format!("{}", i),
+            Value::Text(s) => format!("{}", s),
+        }
+    }
+}
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Declaration {
