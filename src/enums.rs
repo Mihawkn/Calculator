@@ -14,6 +14,7 @@ pub enum Token {
     LBRACE,
     RBRACE,
     EQ,
+    GT,
     LT,
     NUMBER(i32),
     IF,
@@ -37,6 +38,8 @@ pub enum BinOp {
 #[derive(Debug, PartialEq, Clone)]
 pub enum ComparisonOp {
     Lt,
+    Gt,
+    Eq,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -93,6 +96,7 @@ pub enum Statement {
 pub enum Value {
     Int(i32),
     Text(String),
+    Bool(bool),
     Unit,
 }
 impl ToString for Value {
@@ -100,6 +104,7 @@ impl ToString for Value {
         match self {
             Value::Int(i) => format!("{}", i),
             Value::Text(s) => format!("{}", s),
+            Value::Bool(b) => format!("{}", b),
             Value::Unit => format!(""),
         }
     }

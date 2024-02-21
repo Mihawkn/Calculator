@@ -40,6 +40,14 @@ impl Scanner {
                     self.pos += 1;
                     return Some(Token::LT);
                 }
+                '>' => {
+                    self.pos += 1;
+                    return Some(Token::GT);
+                }
+                '=' => {
+                    self.pos += 1;
+                    return Some(Token::EQ);
+                }
                 '(' => {
                     self.pos += 1;
                     return Some(Token::LPAR);
@@ -55,10 +63,6 @@ impl Scanner {
                 '}' => {
                     self.pos += 1;
                     return Some(Token::RBRACE);
-                }
-                '=' => {
-                    self.pos += 1;
-                    return Some(Token::EQ);
                 }
                 ',' => {
                     self.pos += 1;

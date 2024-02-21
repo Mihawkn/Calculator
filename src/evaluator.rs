@@ -53,13 +53,11 @@ fn exec(statement: Statement, env: &mut Env, ft: &mut FunctionTable) -> Result<(
             condition,
             then,
             els,
-        } => {
-            if calc(*condition, env, ft)? > Value::Int(0) {
-                exec(*then, env, ft)
-            } else {
-                exec(*els, env, ft)
-            }
-        }
+        } => match calc(*condition, env, ft)? {
+            Value::Int(1) | Value::Bool(true) => exec(*then, env, ft),
+            Value::Int(0) | Value::Bool(false) => exec(*els, env, ft),
+            _ => Err(format!("比較できないものを比較しようとした")),
+        },
         _ => Err(format!(
             "実行できない Statement {:?} を実行しようとした",
             statement
@@ -91,13 +89,18 @@ fn calc(expr: Expr, env: &mut Env, ft: &mut FunctionTable) -> Result<Value, Stri
             },
         },
         Expr::Comparison { op, lhs, rhs } => match op {
-            ComparisonOp::Lt => {
-                return if calc(*lhs, env, ft) < calc(*rhs, env, ft) {
-                    Ok(Value::Int(1))
-                } else {
-                    Ok(Value::Int(0))
-                }
-            }
+            ComparisonOp::Lt => match (calc(*lhs, env, ft)?, calc(*rhs, env, ft)?) {
+                (Value::Int(lhs_n), Value::Int(rhs_n)) => Ok(Value::Bool(lhs_n < rhs_n)),
+                _ => Err(format!("比較が未定義")),
+            },
+            ComparisonOp::Gt => match (calc(*lhs, env, ft)?, calc(*rhs, env, ft)?) {
+                (Value::Int(lhs_n), Value::Int(rhs_n)) => Ok(Value::Bool(lhs_n > rhs_n)),
+                _ => Err(format!("比較が未定義")),
+            },
+            ComparisonOp::Eq => match (calc(*lhs, env, ft)?, calc(*rhs, env, ft)?) {
+                (Value::Int(lhs_n), Value::Int(rhs_n)) => Ok(Value::Bool(lhs_n == rhs_n)),
+                _ => Err(format!("比較が未定義")),
+            },
         },
         Expr::Number(n) => Ok(Value::Int(n)),
         Expr::Var(s) => match env.get(&s.to_string()) {

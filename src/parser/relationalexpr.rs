@@ -14,6 +14,8 @@ impl Parser {
 
         match self.current() {
             Some(Token::LT) => self.lt(expr),
+            Some(Token::GT) => self.gt(expr),
+            Some(Token::EQ) => self.eq(expr),
             _ => expr,
         }
     }
@@ -26,4 +28,24 @@ impl Parser {
             rhs: Box::new(self.parse_expr()),
         }
     }
+
+    fn gt(&mut self, lhs: Expr) -> Expr {
+        self.confirm(Token::GT);
+        Expr::Comparison {
+            op: ComparisonOp::Gt,
+            lhs: Box::new(lhs),
+            rhs: Box::new(self.parse_expr()),
+        }
+    }
+
+    fn eq(&mut self, lhs: Expr) -> Expr {
+        self.confirm(Token::EQ);
+        Expr::Comparison {
+            op: ComparisonOp::Eq,
+            lhs: Box::new(lhs),
+            rhs: Box::new(self.parse_expr()),
+        }
+    }
+
+
 }
