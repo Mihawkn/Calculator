@@ -74,7 +74,7 @@ fn calc(expr: Expr, env: &mut Env, ft: &mut FunctionTable) -> Result<Value, Stri
         Expr::Binary { op, lhs, rhs } => match op {
             BinOp::Add => match (calc(*lhs, env, ft)?, calc(*rhs, env, ft)?) {
                 (Value::Int(lhs_n), Value::Int(rhs_n)) => Ok(Value::Int(lhs_n + rhs_n)),
-                (Value::Text(lhs_s), Value::Text(rhs_s)) => Ok(Value::Text(lhs_s + &rhs_s)),
+                (Value::String(lhs_s), Value::String(rhs_s)) => Ok(Value::String(lhs_s + &rhs_s)),
                 _ => Err(format!("加算処理が未定義")),
             },
             BinOp::Sub => match (calc(*lhs, env, ft)?, calc(*rhs, env, ft)?) {
@@ -113,7 +113,7 @@ fn calc(expr: Expr, env: &mut Env, ft: &mut FunctionTable) -> Result<Value, Stri
                 env, s
             )),
         },
-        Expr::Str(s) => Ok(Value::Text(s)),
+        Expr::Str(s) => Ok(Value::String(s)),
         Expr::FunctionCall { id, args } => {
             // ローカル環境を用意する
             let mut local_env = Env::new();

@@ -158,7 +158,7 @@ mod tests {
 
         // 実行後に x = Hello が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["x"], Value::Text("Hello".to_string()));
+        assert_eq!(env["x"], Value::String("Hello".to_string()));
     }
 
     #[test]
@@ -169,6 +169,6 @@ mod tests {
 
         // 実行後に z = abcdef が代入されていること
         evaluator::eval(parser::parser(scanner::scanner(str)), &mut env, &mut ft);
-        assert_eq!(env["z"], Value::Text("abcdef".to_string()));
+        assert_eq!(env["z"], Value::String("abcdef".to_string()));
     }
 }

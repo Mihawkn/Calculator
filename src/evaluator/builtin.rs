@@ -44,7 +44,7 @@ pub fn register(ft: &mut FunctionTable) -> () {
 ///
 fn print(params: Vec<Value>) -> Result<Value, String> {
     match &params[0] {
-        Value::Text(s) => {
+        Value::String(s) => {
             let mut str: String = s.to_string();
 
             // 文字列中に含まれる{}を第2引数以降に変換する

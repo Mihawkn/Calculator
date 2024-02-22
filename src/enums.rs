@@ -99,7 +99,7 @@ pub trait AsBool {
 #[derive(Debug, PartialEq, PartialOrd, Clone)]
 pub enum Value {
     Int(i32),
-    Text(String),
+    String(String),
     Bool(bool),
     Unit,
 }
@@ -108,7 +108,7 @@ impl AsBool for Value {
         match self {
             Value::Int(i) if *i == 0 => false,
             Value::Int(_i) => true,
-            Value::Text(_s) => true,
+            Value::String(_s) => true,
             Value::Bool(b) => *b,
             Value::Unit => false,
         }
@@ -118,7 +118,7 @@ impl ToString for Value {
     fn to_string(&self) -> String {
         match self {
             Value::Int(i) => format!("{}", i),
-            Value::Text(s) => format!("{}", s),
+            Value::String(s) => format!("{}", s),
             Value::Bool(b) => format!("{}", b),
             Value::Unit => format!(""),
         }
