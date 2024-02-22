@@ -3,6 +3,7 @@ mod builtin;
 use crate::Env;
 use crate::FunctionTable;
 
+use crate::enums::AsBool;
 use crate::enums::BinOp;
 use crate::enums::ComparisonOp;
 use crate::enums::Declaration;
@@ -53,11 +54,13 @@ fn exec(statement: Statement, env: &mut Env, ft: &mut FunctionTable) -> Result<(
             condition,
             then,
             els,
-        } => match calc(*condition, env, ft)? {
-            Value::Int(1) | Value::Bool(true) => exec(*then, env, ft),
-            Value::Int(0) | Value::Bool(false) => exec(*els, env, ft),
-            _ => Err(format!("比較できないものを比較しようとした")),
-        },
+        } => {
+            if calc(*condition, env, ft)?.as_bool() {
+                exec(*then, env, ft)
+            } else {
+                exec(*els, env, ft)
+            }
+        }
         _ => Err(format!(
             "実行できない Statement {:?} を実行しようとした",
             statement

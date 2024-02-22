@@ -92,12 +92,27 @@ pub enum Statement {
     Null,
 }
 
+pub trait AsBool {
+    fn as_bool(&self) -> bool;
+}
+
 #[derive(Debug, PartialEq, PartialOrd, Clone)]
 pub enum Value {
     Int(i32),
     Text(String),
     Bool(bool),
     Unit,
+}
+impl AsBool for Value {
+    fn as_bool(&self) -> bool {
+        match self {
+            Value::Int(i) if *i == 0 => false,
+            Value::Int(_i) => true,
+            Value::Text(_s) => true,
+            Value::Bool(b) => *b,
+            Value::Unit => false,
+        }
+    }
 }
 impl ToString for Value {
     fn to_string(&self) -> String {
